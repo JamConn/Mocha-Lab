@@ -92,5 +92,56 @@ describe("Catalogue", () => {
           expect(rejectedProduct).to.be.undefined; 
         });
       });
+      describe("search", function () {
+        beforeEach(function () {
+          cat.addProduct(new Product("W123", "Widget 1", 100, 10, 12.0));
+          cat.addProduct(new Product("W124", "Widget 2", 100, 10, 14.0));
+        });
+    
+        it("should return products whose name contains the substring", function () {
+          const result = cat.search({ keyword: "Product" });
+          expect(result.length).to.equal(3);
+          const productNames = result.map((p) => p.name);
+          expect(productNames).to.have.members([
+            "Product 1",
+            "Product 2",
+            "Product 3",
+          ]);
+        });
+        it("should return products whose price is below the limit", function () {
+          const result = cat.search({ price: 11.0 });
+          expect(result.length).to.equal(3);
+          const productNames = result.map((p) => p.name);
+          expect(productNames).to.have.members([
+            "Product 1",
+            "Product 2",
+            "Product 3",
+          ]);
+        });
+        it("should throw an error when criteria is not valid option", function () {
+          expect(() => cat.search({ badCriteria: "" })).to.throw("Bad search");
+        });
+    
+        describe("boundry cases", function () {
+          it("should return an empty array for when no name matches", function () {
+            const result = cat.search({ keyword: "XXX" });
+            expect(result.length).to.equal(0);
+          });
+          it("should return empty array when no price matches found", function () {
+            const result = cat.search({ price: 5.0 });
+            expect(result.length).to.equal(0);
+          });
+          it("should include products whose price is equal to the limit given", function () {
+            const result = cat.search({ price: 10.0 });
+            expect(result.length).to.equal(3);
+            const productNames = result.map( p => p.name);
+            expect(productNames).to.have.members([
+              "Product 1",
+              "Product 2",
+              "Product 3",
+            ]);
+          });
+        });
+      });
     });
   });
