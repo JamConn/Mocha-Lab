@@ -12,6 +12,7 @@ describe("Catalogue", () => {
     cat.addProduct(new Product("A123", "Product 1", 100, 10, 10.0));
     cat.addProduct(new Product("A124", "Product 2", 100, 10.0));
     cat.addProduct(new Product("A125", "Product 3", 100, 10, 10.0));
+    console.log('before block')
   });
   describe("findProductById", function () {
     it("should find a valid product id", function () {
@@ -30,7 +31,6 @@ describe("Catalogue", () => {
       // Check target state
       result = cat.findProductById("A123");
       expect(result).to.be.undefined;
-      console.log('before block')
     });
     it("should return undefined when product id is invalid.", () => {
       const result = cat.removeProductById("A321");
@@ -59,5 +59,24 @@ describe("Catalogue", () => {
           expect(result.productIds).to.be.empty;
         });
       });
+    describe("batchAddProducts", () => {
+        beforeEach(function () {
+          batch = {
+            type: 'Batch',
+            products: [
+              new Product("A126", "Product 6", 100, 10, 10.0),
+              new Product("A127", "Product 7", 100, 10, 10.0),
+            ],
+          };
+        });
+        it("should update the catalogue for a normal request and return the number added", () => {
+          const result = cat.batchAddProducts(batch);
+          expect(result).to.equal(2);
+          let addedProduct = cat.findProductById("A126");
+          expect(addedProduct).to.not.be.undefined;
+          addedProduct = cat.findProductById("A127");
+          expect(addedProduct).to.not.be.undefined;
+        });
+    });
     });
   });
